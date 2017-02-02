@@ -1,23 +1,21 @@
 import express from 'express';
 import path from 'path';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactDOMServer from 'react-dom/server';
-import { Router, match, RouterContext, browserHistory } from 'react-router';
+import { match } from 'react-router';
 
 import routes from './src/client/routes.js';
 
 const app = express();
 
-// app.use(express.static(__dirname));
+app.use(express.static(path.resolve(__dirname)));
 
-app.get('*', (req, res) => {
-    var html = '';
-    match({ routes, location: req.url}, function(err, redirectLocation, renderProps) {
+app.get('*', (req, res, next) => {
+    match({routes, location: req.url}, function(err, redirectLocation, renderProps) {
         if(renderProps)
         {
-            html = ReactDOMServer.renderToString(<RouterContext {...renderProps}/>);
-            res.send(html);
+            res.sendfile(path.resolve(__dirname, 'index.html'));
         }
         else{
             res.status(404).send('Not found')
